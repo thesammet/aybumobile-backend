@@ -5,8 +5,8 @@ const validator = require('validator')
 const userSchema = new mongoose.Schema({
     username: {
         type: String,
-        required: true,
         unique: true,
+        default: null,
         validate(username) {
             if (username < 4) {
                 throw new Error({ error: 'Username greater than 4 characters!' })
@@ -17,6 +17,10 @@ const userSchema = new mongoose.Schema({
     department: {
         type: String,
         default: null
+    },
+    deviceId: {
+        type: String,
+        required: true,
     },
     tokens: [{
         token: {
@@ -47,6 +51,14 @@ userSchema.methods.generateAuthToken = async function () {
     await user.save()
 
     return token
+}
+
+userSchema.statics.findByCredentials = async function (deviceId) {
+    const user = await User.findOne({ deviceId })
+    if (!user) {
+        throw new Error('Unable to login user')
+    }
+    return user
 }
 
 userSchema.pre('save', async function (next) {
