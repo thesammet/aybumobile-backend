@@ -6,7 +6,6 @@ const userSchema = new mongoose.Schema({
     username: {
         type: String,
         unique: true,
-        default: null,
         validate(username) {
             if (username < 4) {
                 throw new Error({ error: 'Username greater than 4 characters!' })
@@ -21,6 +20,11 @@ const userSchema = new mongoose.Schema({
     deviceId: {
         type: String,
         required: true,
+    },
+    role: {
+        type: String,
+        required: true,
+        default: "user"
     },
     tokens: [{
         token: {
