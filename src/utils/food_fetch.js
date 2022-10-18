@@ -4,7 +4,7 @@ const fetch = require('node-fetch')
 
 let dayAndMeal = []
 const foodListUrl = "https://aybu.edu.tr/sks/tr/sayfa/6265/Ayl%C4%B1k-Yemek-Men%C3%BCs%C3%BC"
-const getFoodList = async () => {
+const getFoodList = async (type, date) => {
     try {
         let response = await fetch(foodListUrl);
         let htmlString = await response.text();
@@ -47,12 +47,22 @@ const getFoodList = async () => {
 
         // return today's food
         let todayFoodList = "off"
+        let foodByDate = "off"
+
         dayList.forEach((element, index) => {
-            if (moment().format('DD/MM/YYYY') === element) {
+            if (moment().format('DD.MM.YYYY') === element) {
                 todayFoodList = foodList[index]
             }
+            if (date == element && type == "date") {
+                foodByDate = foodList[index]
+            }
         });
-        return todayFoodList == "off" ? null : todayFoodList
+        if (type == "daily") {
+            return todayFoodList == "off" ? null : todayFoodList
+        }
+        else if (type == "date") {
+            return foodByDate == "off" ? null : foodByDate
+        }
     } catch (error) {
         return error
     }

@@ -1,9 +1,10 @@
 const express = require('express')
 const router = new express.Router()
 const Academic = require('../models/academic')
+const auth = require('../middleware/auth')
 
 // JUST ADMIN CAN POST THE ACADEMIC ITEMS
-router.post('/academic', async (req, res) => {
+router.post('/academic', auth, async (req, res) => {
     const academic = new Academic(req.body)
     try {
         await academic.save()
@@ -13,7 +14,7 @@ router.post('/academic', async (req, res) => {
     }
 })
 
-router.get('/academic', async (req, res) => {
+router.get('/academic', auth, async (req, res) => {
     try {
         const academics = await Academic.find({})
         res.status(200).send({ data: academics })
