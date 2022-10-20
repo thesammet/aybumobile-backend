@@ -4,7 +4,7 @@ const Comment = require('../models/comment')
 const auth = require('../middleware/auth')
 
 router.post('/comments', auth, async (req, res) => {
-    const comment = new Comment({ ...req.body, owner: req.user._id, })
+    const comment = new Comment({ ...req.body, owner: req.user._id, food: req.body.foodId })
     try {
         await comment.save()
         res.status(201).send({ data: comment })

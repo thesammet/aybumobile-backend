@@ -43,6 +43,12 @@ userSchema.virtual('comments', {
     foreignField: 'owner'
 })
 
+userSchema.virtual('ratings', {
+    ref: 'Rating',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()

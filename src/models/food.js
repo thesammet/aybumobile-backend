@@ -5,6 +5,21 @@ const foodSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    comments: {
+        type: Array,
+    },
+    rating: {
+        type: String,
+        default: null
+    },
+    likeCount: {
+        type: Number,
+        default: 0
+    },
+    dislikeCount: {
+        type: Number,
+        default: 0
+    }
 },
     {
         timestamp: true
