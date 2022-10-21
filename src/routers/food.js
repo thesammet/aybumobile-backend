@@ -12,6 +12,9 @@ router.get('/food', auth, async (req, res) => {
     const queryDate = req.query.date
     let date = moment(queryDate, 'DD.MM.YYYY');
     try {
+        if (!queryDate) {
+            throw new Error('Food date required')
+        }
         const foodObject = await foodFetch(queryDate != null ? "date" : "daily", queryDate)
         const comments = await Comment.find({
             //get comments by 24 hours of the given date
@@ -24,7 +27,7 @@ router.get('/food', auth, async (req, res) => {
         const dislikes = await Rating.find({ rating: "dislike", foodDate: queryDate })
         let userCurrent = await Rating.findOne({ owner: req.user._id, foodDate: queryDate })
         if (!userCurrent) {
-            userCurrent = "notr"
+            userCurrent = "none"
         } else {
             userCurrent = userCurrent.rating
         }

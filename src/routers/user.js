@@ -1,8 +1,9 @@
 const express = require('express')
 const router = new express.Router()
 const User = require('../models/user')
+const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
 const _ = require('lodash')
-//user login, get comments&star by id, all comments&star, post comment&star, update user
 
 router.post('/users', async (req, res) => {
     const user = new User(req.body)
@@ -27,6 +28,49 @@ router.post('/users/login', async (req, res) => {
         res.status(200).send({ user, token })
     } catch (error) {
         res.status(400).send({ error: error.toString() })
+    }
+})
+
+router.patch('/users/me', auth, async (req, res) => {
+    const updates = Object.keys(req.body)
+    const allowedUpdates = ['username', 'department']
+    const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
+    if (!isValidOperation) {
+        return res.status(400).send({ error: 'Invalid updates: username and department are valid field!' })
+    }
+    try {
+        updates.forEach((update) => req.user[update] = req.body[update])
+        await req.user.save()
+        res.status(200).send(req.user)
+    } catch (error) {
+        res.status(400).send({ error })
+    }
+})
+
+router.get('/users/me', auth, async (req, res) => {
+    try {
+        res.status(200).send({ user: req.user })
+    } catch (error) {
+        res.status(404).send({ error: error.toString() })
+    }
+})
+
+router.get('/users', auth, admin, async (req, res) => {
+    const users = await User.find()
+    try {
+        res.status(200).send(users)
+    } catch (error) {
+        res.status(404).send({ error: error.toString })
+    }
+})
+
+router.delete('/users/me', auth, async (req, res) => {
+    try {
+        const user = req.user
+        await user.remove()
+        res.status(200).send({ user })
+    } catch (error) {
+        res.status(404).send({ error })
     }
 })
 

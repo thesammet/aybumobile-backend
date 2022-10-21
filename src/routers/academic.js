@@ -2,10 +2,11 @@ const express = require('express')
 const router = new express.Router()
 const Academic = require('../models/academic')
 const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
 
 // JUST ADMIN CAN POST THE ACADEMIC ITEMS
-router.post('/academic', auth, async (req, res) => {
-    const academic = new Academic(req.body)
+router.post('/academic', admin, auth, async (req, res) => {
+    const academic = new Academic({ ...req.body, owner: req.user._id })
     try {
         await academic.save()
         res.status(201).send({ data: academic })

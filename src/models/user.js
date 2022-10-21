@@ -19,7 +19,7 @@ const userSchema = new mongoose.Schema({
     },
     deviceId: {
         type: String,
-        required: true,
+        required: true
     },
     role: {
         type: String,
@@ -45,6 +45,12 @@ userSchema.virtual('comments', {
 
 userSchema.virtual('ratings', {
     ref: 'Rating',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+userSchema.virtual('academics', {
+    ref: 'Academic',
     localField: '_id',
     foreignField: 'owner'
 })
@@ -82,10 +88,10 @@ userSchema.pre('save', async function (next) {
     next()
 })
 
-/* userSchema.pre('remove', async function (next) {
+userSchema.pre('remove', async function (next) {
     const user = this
     next()
-}) */
+})
 
 const User = mongoose.model('User', userSchema)
 
