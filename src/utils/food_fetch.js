@@ -2,9 +2,8 @@ const cheerio = require('cheerio-without-node-native')
 const moment = require('moment')
 const fetch = require('node-fetch')
 
-let dayAndMeal = []
 const foodListUrl = "https://aybu.edu.tr/sks/tr/sayfa/6265/Ayl%C4%B1k-Yemek-Men%C3%BCs%C3%BC"
-const getFoodList = async (type, date) => {
+const getFoodList = async () => {
     try {
         let response = await fetch(foodListUrl);
         let htmlString = await response.text();
@@ -13,7 +12,7 @@ const getFoodList = async (type, date) => {
         let dayAndFoodList = []; // Can't distinguish between meals and dates because they are both in strong tag. Both are coming.
         let dayList = [];
         let foodList = [];
-
+        let resultList = [];
         // Get all strong tags
         $('.alert')
             .find('strong')
@@ -24,6 +23,7 @@ const getFoodList = async (type, date) => {
                     .replace(/\s+/g, ' ')
                     .trim();
                 dayAndFoodList.push(food);
+
             });
 
         // Get all dates
@@ -45,24 +45,10 @@ const getFoodList = async (type, date) => {
                 foodList.push(food);
             });
 
-        // return today's food
-        let todayFoodList = "off"
-        let foodByDate = "off"
-
-        dayList.forEach((element, index) => {
-            if (moment().format('DD.MM.YYYY') === element) {
-                todayFoodList = foodList[index]
-            }
-            if (date == element && type == "date") {
-                foodByDate = foodList[index]
-            }
-        });
-        if (type == "daily") {
-            return todayFoodList == "off" ? null : todayFoodList
+        for (let i = 0; i < dayList.length; i++) {
+            resultList.push({ date: dayList[i], meal: foodList[i] })
         }
-        else if (type == "date") {
-            return foodByDate == "off" ? null : foodByDate
-        }
+        return resultList
     } catch (error) {
         return error
     }

@@ -1,9 +1,14 @@
 const mongoose = require('mongoose')
 
 const foodSchema = new mongoose.Schema({
-    list: {
+    meal: {
         type: String,
         required: true
+    },
+    date: {
+        type: String,
+        required: true,
+        unique: true
     },
     comments: {
         type: Array,
@@ -19,7 +24,8 @@ const foodSchema = new mongoose.Schema({
     dislikeCount: {
         type: Number,
         default: 0
-    }
+    },
+
 },
     {
         timestamp: true
