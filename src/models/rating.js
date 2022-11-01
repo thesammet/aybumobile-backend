@@ -5,16 +5,16 @@ const ratingSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    food: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Food'
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
         ref: 'User'
     },
-    foodDate: {
-        type: String,
-        required: true,
-        ref: 'Food'
-    }
 },
     {
         timestamps: true

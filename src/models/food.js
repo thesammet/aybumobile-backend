@@ -8,28 +8,33 @@ const foodSchema = new mongoose.Schema({
     date: {
         type: String,
         required: true,
-        unique: true
+        unique: true,
+        autoIndex: true,
     },
-    comments: {
-        type: Array,
-    },
-    rating: {
-        type: String,
-        default: null
-    },
-    likeCount: {
-        type: Number,
-        default: 0
-    },
-    dislikeCount: {
-        type: Number,
-        default: 0
-    },
-
+    social: {
+        type: Object,
+        default: {
+            commentCount: 0,
+            likeCount: 0,
+            dislikeCount: 0
+        }
+    }
 },
     {
         timestamp: true
     })
+
+foodSchema.virtual('comments', {
+    ref: 'Comment',
+    localField: '_id',
+    foreignField: 'food'
+})
+
+foodSchema.virtual('ratings', {
+    ref: 'Rating',
+    localField: '_id',
+    foreignField: 'food'
+})
 
 foodSchema.methods.toJSON = function () {
     const food = this

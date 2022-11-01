@@ -5,6 +5,19 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
+    like: {
+        type: Object,
+        required: true,
+        default: {
+            status: 'notr',
+            likeCount: 0
+        }
+    },
+    food: {
+        type: mongoose.Schema.Types.ObjectId,
+        required: true,
+        ref: 'Food'
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
