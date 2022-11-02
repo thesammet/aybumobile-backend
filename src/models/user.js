@@ -43,6 +43,12 @@ userSchema.virtual('comments', {
     foreignField: 'owner'
 })
 
+userSchema.virtual('comment-ratings', {
+    ref: 'CommentRating',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 userSchema.virtual('ratings', {
     ref: 'Rating',
     localField: '_id',

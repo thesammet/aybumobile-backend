@@ -11,13 +11,20 @@ const foodSchema = new mongoose.Schema({
         unique: true,
         autoIndex: true,
     },
-    social: {
-        type: Object,
-        default: {
-            commentCount: 0,
-            likeCount: 0,
-            dislikeCount: 0
-        }
+    commentCount: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    likeCount: {
+        type: Number,
+        required: true,
+        default: 0
+    },
+    dislikeCount: {
+        type: Number,
+        required: true,
+        default: 0
     }
 },
     {

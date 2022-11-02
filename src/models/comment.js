@@ -5,17 +5,13 @@ const commentSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    like: {
-        type: Object,
+    likeCount: {
+        type: Number,
         required: true,
-        default: {
-            status: 'notr',
-            likeCount: 0
-        }
+        default: 0
     },
     food: {
         type: mongoose.Schema.Types.ObjectId,
-        required: true,
         ref: 'Food'
     },
     owner: {
@@ -27,6 +23,12 @@ const commentSchema = new mongoose.Schema({
     {
         timestamps: true
     })
+
+commentSchema.virtual('comment-ratings', {
+    ref: 'CommentRating',
+    localField: '_id',
+    foreignField: 'comment_id'
+})
 
 commentSchema.methods.toJSON = function () {
     const comment = this
