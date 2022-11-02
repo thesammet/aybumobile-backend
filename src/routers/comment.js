@@ -31,7 +31,6 @@ router.get('/comment/:food_id', auth, async (req, res) => {
             else
                 commentResult.push({ comment: element, isLike: false })
         }
-        console.log(commentResult)
         res.status(200).send({ data: commentResult })
     } catch (error) {
         res.status(400).send({ error: error.toString() })
