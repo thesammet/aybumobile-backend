@@ -9,7 +9,6 @@ router.post('/rating', auth, async (req, res) => {
     try {
         let rated = await Rating.findOne({ food: req.body.food, owner: req.user._id })
         if (!rated) {
-            //save
             await ratingObject.save()
             return res.status(201).send({ data: ratingObject })
         }

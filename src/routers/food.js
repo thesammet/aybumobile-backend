@@ -26,7 +26,7 @@ router.get('/food', auth, async (req, res) => {
         for await (const element of foods) {
             const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length
             const dislikeCount = (await Rating.find({ food: element._id, rating: 'dislike' })).length
-            foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikeCount: dislikeCount } })
+            foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount } })
         }
         res.status(200).send({ data: foodSocialResult })
     } catch (error) {
