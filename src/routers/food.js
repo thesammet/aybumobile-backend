@@ -4,6 +4,7 @@ const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 const Food = require('../models/food')
 const foodFetch = require('../utils/food_fetch')
+const Rating = require('../models/rating')
 
 router.post('/food', admin, auth, async (req, res) => {
     try {
@@ -21,7 +22,13 @@ router.post('/food', admin, auth, async (req, res) => {
 router.get('/food', auth, async (req, res) => {
     try {
         const foods = await Food.find({})
-        res.status(200).send({ data: foods })
+        let foodSocialResult = []
+        for await (const element of foods) {
+            const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length
+            const dislikeCount = (await Rating.find({ food: element._id, rating: 'dislike' })).length
+            foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikeCount: dislikeCount } })
+        }
+        res.status(200).send({ data: foodSocialResult })
     } catch (error) {
         res.status(400).send({ error })
     }

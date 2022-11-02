@@ -16,16 +16,6 @@ const foodSchema = new mongoose.Schema({
         required: true,
         default: 0
     },
-    likeCount: {
-        type: Number,
-        required: true,
-        default: 0
-    },
-    dislikeCount: {
-        type: Number,
-        required: true,
-        default: 0
-    }
 },
     {
         timestamp: true
