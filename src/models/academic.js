@@ -6,9 +6,9 @@ const academicSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    url: {
-        type: String,
-        required: true
+    content: {
+        type: Buffer,
+        required: true,
     },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
