@@ -63,6 +63,7 @@ router.get('/users', auth, admin, async (req, res) => {
         res.status(404).send({ error: error.toString })
     }
 })
+
 router.get('/role/me', auth, async (req, res) => {
     try {
         const user = req.user

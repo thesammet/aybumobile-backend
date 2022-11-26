@@ -11,13 +11,14 @@ const _ = require('lodash')
 router.post('/food', admin, auth, async (req, res) => {
     try {
         const foodObject = await foodFetch()
+        console.log(foodObject)
         for await (const element of foodObject) {
             const mealObject = new Food({ meal: element.meal, date: element.date })
             await mealObject.save()
         }
         res.status(201).send('Meal data created succesfully')
     } catch (error) {
-        res.status(400).send({ error: true, errorMessage: error })
+        res.status(400).send({ error: true, errorMessage: error.toString() })
     }
 })
 
@@ -42,7 +43,7 @@ router.get('/food', auth, async (req, res) => {
     }
 })
 
-router.get('/trends', auth, async (req, res) => {
+router.get('/trend', auth, async (req, res) => {
     try {
         const foods = await Food.find({})
         let foodSocialResult = []

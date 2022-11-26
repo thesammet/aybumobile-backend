@@ -4,6 +4,7 @@ const Comment = require('../models/comment')
 const CommentRating = require('../models/comment-rating')
 const Food = require('../models/food')
 const auth = require('../middleware/auth')
+const User = require('../models/user')
 
 router.post('/comment', auth, async (req, res) => {
     const comment = new Comment({ ...req.body, owner: req.user._id })
@@ -26,10 +27,12 @@ router.get('/comment/:food_id', auth, async (req, res) => {
         let commentResult = []
         for await (const element of foodComments) {
             const isLike = await CommentRating.findOne({ comment: element._id, status: true, owner: req.user._id })
+            const userRole = await User.findOne({ _id: element.owner })
+            console.log(isLike)
             if (isLike)
-                commentResult.push({ comment: element, isLike: true, userRole: req.user.role })
+                commentResult.push({ comment: element, isLike: true, userRole: userRole.role })
             else
-                commentResult.push({ comment: element, isLike: false, userRole: req.user.role })
+                commentResult.push({ comment: element, isLike: false, userRole: userRole.role })
         }
         res.status(200).send({ data: commentResult })
     } catch (error) {
