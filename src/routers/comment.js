@@ -27,9 +27,9 @@ router.get('/comment/:food_id', auth, async (req, res) => {
         for await (const element of foodComments) {
             const isLike = await CommentRating.findOne({ comment: element._id, status: true, owner: req.user._id })
             if (isLike)
-                commentResult.push({ comment: element, isLike: true })
+                commentResult.push({ comment: element, isLike: true, userRole: req.user.role })
             else
-                commentResult.push({ comment: element, isLike: false })
+                commentResult.push({ comment: element, isLike: false, userRole: req.user.role })
         }
         res.status(200).send({ data: commentResult })
     } catch (error) {

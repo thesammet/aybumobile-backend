@@ -63,6 +63,14 @@ router.get('/users', auth, admin, async (req, res) => {
         res.status(404).send({ error: error.toString })
     }
 })
+router.get('/role/me', auth, async (req, res) => {
+    try {
+        const user = req.user
+        res.status(200).send({ error: false, role: user.role })
+    } catch (error) {
+        res.status(404).send({ error: true, errorMsg: error })
+    }
+})
 
 router.delete('/users/me', auth, async (req, res) => {
     try {
