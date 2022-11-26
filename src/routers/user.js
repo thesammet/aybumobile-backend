@@ -33,10 +33,10 @@ router.post('/users/login', async (req, res) => {
 
 router.patch('/users/me', auth, async (req, res) => {
     const updates = Object.keys(req.body)
-    const allowedUpdates = ['username', 'department']
+    const allowedUpdates = ['username', 'department', 'faculty']
     const isValidOperation = updates.every((update) => allowedUpdates.includes(update))
     if (!isValidOperation) {
-        return res.status(400).send({ error: 'Invalid updates: username and department are valid field!' })
+        return res.status(400).send({ error: 'Invalid updates: Fields can be username, department and faculty!' })
     }
     try {
         updates.forEach((update) => req.user[update] = req.body[update])

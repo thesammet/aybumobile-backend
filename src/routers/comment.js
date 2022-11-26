@@ -22,7 +22,7 @@ router.post('/comment', auth, async (req, res) => {
 
 router.get('/comment/:food_id', auth, async (req, res) => {
     try {
-        const foodComments = await Comment.find({ food: req.params.food_id })
+        const foodComments = await Comment.find({ food: req.params.food_id }).sort('-createdAt')
         let commentResult = []
         for await (const element of foodComments) {
             const isLike = await CommentRating.findOne({ comment: element._id, status: true, owner: req.user._id })

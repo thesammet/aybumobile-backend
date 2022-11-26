@@ -15,7 +15,11 @@ const userSchema = new mongoose.Schema({
     },
     department: {
         type: String,
-        default: null
+        required: true
+    },
+    faculty: {
+        type: String,
+        required: true
     },
     deviceId: {
         type: String,

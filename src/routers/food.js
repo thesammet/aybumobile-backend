@@ -28,11 +28,17 @@ router.get('/food', auth, async (req, res) => {
         for await (const element of foods) {
             const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length
             const dislikeCount = (await Rating.find({ food: element._id, rating: 'dislike' })).length
-            foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount } })
+            const ratingStatus = await Rating.find({ food: element._id, owner: req.user._id })
+            if (ratingStatus.length != 0) {
+                foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount, ratingStatus: ratingStatus[0].rating } })
+            } else
+                foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount, ratingStatus: null } })
+
         }
         res.status(200).send({ data: foodSocialResult })
     } catch (error) {
-        res.status(400).send({ error })
+        console.log(error)
+        res.status(400).send({ error: error })
     }
 })
 
@@ -43,12 +49,16 @@ router.get('/trends', auth, async (req, res) => {
         for await (const element of foods) {
             const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length
             const dislikeCount = (await Rating.find({ food: element._id, rating: 'dislike' })).length
-            foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount })
+            const ratingStatus = await Rating.find({ food: element._id, owner: req.user._id })
+            if (ratingStatus.length != 0) {
+                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: ratingStatus[0].rating })
+            } else
+                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: null })
         }
-        const mostCommentFood = foodSocialResult.sort(dynamicSort("-comments")).slice(0, 10)
+        const commentTrend = foodSocialResult.sort(dynamicSort("-comments")).slice(0, 10)
         const likeTrend = foodSocialResult.sort(dynamicSort("-likes")).slice(0, 10)
         const dislikeTrend = foodSocialResult.sort(dynamicSort("-dislikes")).slice(0, 10)
-        res.status(200).send({ data: { commentTrend: mostCommentFood, likeTrend: likeTrend, dislikeTrend: dislikeTrend } })
+        res.status(200).send({ data: { commentTrend, likeTrend, dislikeTrend } })
     } catch (error) {
         res.status(400).send({ error })
     }
