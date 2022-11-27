@@ -35,8 +35,11 @@ router.get('/academic/:department_name', auth, async (req, res) => {
                 data: null
             })
         }
-
-        res.status(200).send({ data: academic })
+        res.status(200).send({
+            error: false,
+            errorMsg: null,
+            data: academic
+        })
     } catch (error) {
         res.status(400).send({ error: error.toString() })
     }
