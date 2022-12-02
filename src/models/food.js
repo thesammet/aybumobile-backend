@@ -11,6 +11,12 @@ const foodSchema = new mongoose.Schema({
         unique: true,
         autoIndex: true,
     },
+    epoch: {
+        type: Date,
+        required: true,
+        unique: true,
+        autoIndex: true,
+    },
     commentCount: {
         type: Number,
         required: true,
@@ -38,6 +44,7 @@ foodSchema.methods.toJSON = function () {
     const foodObject = food.toObject()
 
     delete foodObject.__v
+    delete foodObject.epoch
 
     return foodObject
 }
