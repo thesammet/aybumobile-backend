@@ -15,7 +15,6 @@ router.post('/food', admin, auth, async (req, res) => {
         const foodObject = await foodFetch()
         for await (const element of foodObject) {
             const epoch = new Date(modifiedDate(element.date)).getTime();
-            console.log(epoch)
             const mealObject = new Food({ meal: element.meal, date: element.date, epoch })
             await mealObject.save()
         }
@@ -28,7 +27,6 @@ router.post('/food', admin, auth, async (req, res) => {
 router.get('/food', auth, async (req, res) => {
     let today = moment().add(-1, 'days')
     let lastWeekDay = moment().add(6, 'days')
-    console.log(today)
     try {
         const foods = await Food.find({
             epoch: {
@@ -38,18 +36,17 @@ router.get('/food', auth, async (req, res) => {
         })
         let foodSocialResult = []
         for await (const element of foods) {
-            const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length
-            const dislikeCount = (await Rating.find({ food: element._id, rating: 'dislike' })).length
+            const likeCount = (await Rating.count({ food: element._id, rating: 'like' }))
+            const dislikeCount = (await Rating.count({ food: element._id, rating: 'dislike' }))
             const ratingStatus = await Rating.find({ food: element._id, owner: req.user._id })
             if (ratingStatus.length != 0) {
                 foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount, ratingStatus: ratingStatus[0].rating } })
             } else
-                foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount, ratingStatus: null } })
+                foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount, ratingStatus: 'inactive' } })
 
         }
         res.status(200).send({ data: foodSocialResult })
     } catch (error) {
-        console.log(error)
         res.status(400).send({ error: error })
     }
 })
@@ -73,7 +70,7 @@ router.get('/trend', auth, async (req, res) => {
             if (ratingStatus.length != 0) {
                 foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: ratingStatus[0].rating })
             } else
-                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: null })
+                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: 'inactive' })
         }
         const commentTrend = foodSocialResult.sort(dynamicSort("-comments")).slice(0, 7)
         const likeTrend = foodSocialResult.sort(dynamicSort("-likes")).slice(0, 7)
