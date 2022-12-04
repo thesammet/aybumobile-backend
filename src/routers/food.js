@@ -47,7 +47,7 @@ router.get('/food', auth, async (req, res) => {
                 foodSocialResult.push({ meal: element, social: { likes: likeCount, dislikes: dislikeCount, ratingStatus: null } })
 
         }
-        res.status(200).send({ data: foodSocialResult, betweenDate: { today, lastWeekDay } })
+        res.status(200).send({ data: foodSocialResult })
     } catch (error) {
         console.log(error)
         res.status(400).send({ error: error })

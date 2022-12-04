@@ -8,6 +8,7 @@ const ratingSchema = new mongoose.Schema({
     food: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
+        default: 'inactive',
         ref: 'Food'
     },
     owner: {

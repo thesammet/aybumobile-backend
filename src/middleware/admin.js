@@ -7,7 +7,7 @@ const auth = async (req, res, next) => {
         const user = await User.findOne({ _id: decoded._id, 'tokens.token': token })
         const userRole = user.role
 
-        if (userRole != "admin") {
+        if (userRole != "developer-admin" || userRole != "admin") {
             throw new Error('You have not authority for that action!')
         }
         next()
