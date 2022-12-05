@@ -16,6 +16,17 @@ router.post('/academic', admin, upload.single('content'), auth, async (req, res)
     }
 })
 
+router.post('/academic-exam', admin, upload.single('exam'), auth, async (req, res) => {
+    try {
+        const academic = await Academic.findOne({ title: req.body.title })
+        academic.exam = req.file.buffer
+        await academic.save()
+        res.status(201).send({ data: academic })
+    } catch (error) {
+        res.status(400).send({ error: error.toString() })
+    }
+})
+
 router.get('/academic', auth, async (req, res) => {
     try {
         const academics = await Academic.find({})

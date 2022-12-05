@@ -10,6 +10,10 @@ const academicSchema = new mongoose.Schema({
         type: Buffer,
         required: true,
     },
+    exam: {
+        type: Buffer,
+        default: null
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,
