@@ -14,6 +14,10 @@ const academicSchema = new mongoose.Schema({
         type: Buffer,
         default: null
     },
+    announcement: {
+        type: String,
+        default: null
+    },
     owner: {
         type: mongoose.Schema.Types.ObjectId,
         required: true,

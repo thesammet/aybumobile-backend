@@ -8,7 +8,7 @@ const upload = require('../utils/upload')
 // JUST ADMIN CAN POST THE ACADEMIC ITEMS
 router.post('/academic', admin, upload.single('content'), auth, async (req, res) => {
     try {
-        const academic = new Academic({ title: req.body.title, content: req.file.buffer, owner: req.user._id })
+        const academic = new Academic({ title: req.body.title, content: req.file.buffer, announcement: req.body.announcement, owner: req.user._id })
         await academic.save()
         res.status(201).send({ data: academic })
     } catch (error) {
@@ -20,6 +20,17 @@ router.post('/academic-exam', admin, upload.single('exam'), auth, async (req, re
     try {
         const academic = await Academic.findOne({ title: req.body.title })
         academic.exam = req.file.buffer
+        await academic.save()
+        res.status(201).send({ data: academic })
+    } catch (error) {
+        res.status(400).send({ error: error.toString() })
+    }
+})
+
+router.post('/academic-announcement', admin, auth, async (req, res) => {
+    try {
+        const academic = await Academic.findOne({ title: req.body.title })
+        academic.announcement = req.body.announcement
         await academic.save()
         res.status(201).send({ data: academic })
     } catch (error) {
