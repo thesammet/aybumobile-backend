@@ -25,8 +25,12 @@ router.post('/food', admin, auth, async (req, res) => {
 })
 
 router.get('/food', auth, async (req, res) => {
-    let today = moment().add(-1, 'days')
+    var dt = new Date();
+    const todayENDate = (dt.getMonth() + 1) + "." + dt.getDate() + "." + dt.getFullYear()
+
+    let today = moment(new Date(todayENDate))
     let lastWeekDay = moment().add(6, 'days')
+
     try {
         const foods = await Food.find({
             epoch: {
