@@ -45,6 +45,13 @@ router.delete('/comment/:id', admin, auth, async (req, res) => {
         const comment = await Comment.findById({ _id: req.params.id })
         if (!comment)
             return res.status(400).send({ error: true, erorrMsg: `There is no comment with ${req.params.id} id` })
+
+        const food = await Food.findById({ _id: req.body.food })
+        if (!food)
+            return res.status(400).send({ error: true, erorrMsg: `There is no food with ${req.body.food} id` })
+        food.commentCount = food.commentCount - 1
+
+        await food.save()
         await comment.remove()
         res.status(200).send({ comment })
     } catch (error) {
