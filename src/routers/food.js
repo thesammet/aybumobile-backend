@@ -25,6 +25,7 @@ router.post('/food', admin, auth, async (req, res) => {
 })
 
 router.get('/food', auth, async (req, res) => {
+
     var dt = new Date();
     const todayENDate = (dt.getMonth() + 1) + "." + dt.getDate() + "." + dt.getFullYear()
 

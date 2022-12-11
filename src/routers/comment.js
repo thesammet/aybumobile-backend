@@ -4,6 +4,7 @@ const Comment = require('../models/comment')
 const CommentRating = require('../models/comment-rating')
 const Food = require('../models/food')
 const auth = require('../middleware/auth')
+const admin = require('../middleware/admin')
 const User = require('../models/user')
 
 router.post('/comment', auth, async (req, res) => {
@@ -36,6 +37,18 @@ router.get('/comment/:food_id', auth, async (req, res) => {
         res.status(200).send({ data: commentResult })
     } catch (error) {
         res.status(400).send({ error: error.toString() })
+    }
+})
+
+router.delete('/comment/:id', admin, auth, async (req, res) => {
+    try {
+        const comment = await Comment.findById({ _id: req.params.id })
+        if (!comment)
+            return res.status(400).send({ error: true, erorrMsg: `There is no comment with ${req.params.id} id` })
+        await comment.remove()
+        res.status(200).send({ comment })
+    } catch (error) {
+        res.status(404).send({ error })
     }
 })
 
