@@ -6,6 +6,7 @@ const Food = require('../models/food')
 const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 const User = require('../models/user')
+const mongoose = require('mongoose');
 
 router.post('/comment', auth, async (req, res) => {
     const comment = new Comment({ ...req.body, owner: req.user._id })
@@ -40,11 +41,14 @@ router.get('/comment/:food_id', auth, async (req, res) => {
     }
 })
 
-router.delete('/comment/:id', admin, auth, async (req, res) => {
+router.delete('/comment/:_id', admin, auth, async (req, res) => {
     try {
-        const comment = await Comment.findById({ _id: req.params.id })
+        if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
+            return res.status(400).send({ error: true, erorrMsg: `Id: ${req.params._id} is invalid` })
+        }
+        const comment = await Comment.findById({ _id: req.params._id })
         if (!comment)
-            return res.status(400).send({ error: true, erorrMsg: `There is no comment with ${req.params.id} id` })
+            return res.status(400).send({ error: true, erorrMsg: `There is no comment with ${req.params._id} id` })
 
         const food = await Food.findById({ _id: req.body.food })
         if (!food)
