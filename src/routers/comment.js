@@ -43,21 +43,18 @@ router.get('/comment/:food_id', auth, async (req, res) => {
 
 router.delete('/comment/:_id', admin, auth, async (req, res) => {
     try {
-        if (!mongoose.Types.ObjectId.isValid(req.params._id)) {
-            return res.status(400).send({ error: true, erorrMsg: `Id: ${req.params._id} is invalid` })
-        }
-        const comment = await Comment.findById({ _id: req.params._id })
+        const comment = await Comment.findOne({ _id: req.params._id })
         if (!comment)
             return res.status(400).send({ error: true, erorrMsg: `There is no comment with ${req.params._id} id` })
 
-        const food = await Food.findById({ _id: req.body.food })
+        const food = await Food.findOne({ _id: req.body.food })
         if (!food)
             return res.status(400).send({ error: true, erorrMsg: `There is no food with ${req.body.food} id` })
         food.commentCount = food.commentCount - 1
 
         await food.save()
         await comment.remove()
-        res.status(200).send({ comment })
+        res.status(200).send({ error: false, data: comment })
     } catch (error) {
         res.status(404).send({ error })
     }
