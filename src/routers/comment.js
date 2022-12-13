@@ -6,7 +6,6 @@ const Food = require('../models/food')
 const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 const User = require('../models/user')
-const mongoose = require('mongoose');
 
 router.post('/comment', auth, async (req, res) => {
     const comment = new Comment({ ...req.body, owner: req.user._id })

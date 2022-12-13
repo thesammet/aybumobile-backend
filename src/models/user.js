@@ -65,6 +65,30 @@ userSchema.virtual('academics', {
     foreignField: 'owner'
 })
 
+userSchema.virtual('posts', {
+    ref: 'Post',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+userSchema.virtual('post-ratings', {
+    ref: 'PostRating',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+userSchema.virtual('post-comments', {
+    ref: 'PostComment',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
+userSchema.virtual('post-comment-ratings', {
+    ref: 'PostCommentRating',
+    localField: '_id',
+    foreignField: 'owner'
+})
+
 userSchema.methods.toJSON = function () {
     const user = this
     const userObject = user.toObject()
