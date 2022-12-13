@@ -29,8 +29,14 @@ router.post('/social-post-comment', auth, async (req, res) => {
 })
 
 router.get('/social-post-comment/:post_id', auth, async (req, res) => {
+    const pageOptions = {
+        page: parseInt(req.query.page, 10) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    }
     try {
         const postComments = await PostComment.find({ post: req.params.post_id }).populate('owner', 'username')
+            .skip(pageOptions.page * pageOptions.limit)
+            .limit(pageOptions.limit)
         let postCommentResult = []
         for await (const element of postComments) {
             const ratingStatus = await PostCommentRating.findOne({ postComment: element._id, owner: req.user._id })

@@ -23,8 +23,15 @@ router.post('/comment', auth, async (req, res) => {
 })
 
 router.get('/comment/:food_id', auth, async (req, res) => {
+    const pageOptions = {
+        page: parseInt(req.query.page, 10) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    }
+
     try {
         const foodComments = await Comment.find({ food: req.params.food_id }).sort('-createdAt')
+            .skip(pageOptions.page * pageOptions.limit)
+            .limit(pageOptions.limit)
         let commentResult = []
         for await (const element of foodComments) {
             const isLike = await CommentRating.findOne({ comment: element._id, status: true, owner: req.user._id })
