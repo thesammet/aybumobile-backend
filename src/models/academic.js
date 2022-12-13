@@ -6,14 +6,6 @@ const academicSchema = new mongoose.Schema({
         required: true,
         unique: true
     },
-    content: {
-        type: Buffer,
-        required: true,
-    },
-    exam: {
-        type: Buffer,
-        default: null
-    },
     announcement: {
         type: String,
         default: null
