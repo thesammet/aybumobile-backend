@@ -22,6 +22,7 @@ router.get('/social-post', auth, async (req, res) => {
     }
     try {
         const posts = await Post.find({}).populate('owner', 'username')
+            .sort('-updatedAt')
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
 

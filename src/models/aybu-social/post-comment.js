@@ -21,7 +21,7 @@ const postCommentSchema = new mongoose.Schema({
     },
 },
     {
-        timestamp: true
+        timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
     })
 
 postCommentSchema.virtual('post-ratings', {

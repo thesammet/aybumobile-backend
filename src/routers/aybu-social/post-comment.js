@@ -34,7 +34,9 @@ router.get('/social-post-comment/:post_id', auth, async (req, res) => {
         limit: parseInt(req.query.limit, 10) || 10
     }
     try {
-        const postComments = await PostComment.find({ post: req.params.post_id }).populate('owner', 'username')
+        const postComments = await PostComment.find({ post: req.params.post_id })
+            .populate('owner', 'username')
+            .sort('-updatedAt')
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
         let postCommentResult = []

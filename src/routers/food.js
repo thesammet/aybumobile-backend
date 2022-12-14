@@ -57,6 +57,12 @@ router.get('/food', auth, async (req, res) => {
 })
 
 router.get('/trend', auth, async (req, res) => {
+
+    const pageOptions = {
+        page: parseInt(req.query.page, 10) || 0,
+        limit: parseInt(req.query.limit, 10) || 10
+    }
+
     let startMonth = moment().startOf('month')
     let endMonth = moment().endOf('month')
 
@@ -66,7 +72,9 @@ router.get('/trend', auth, async (req, res) => {
                 $gte: startMonth,
                 $lt: endMonth
             }
-        })
+        }).skip(pageOptions.page * pageOptions.limit)
+            .limit(pageOptions.limit)
+
         let foodSocialResult = []
         for await (const element of foods) {
             const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length

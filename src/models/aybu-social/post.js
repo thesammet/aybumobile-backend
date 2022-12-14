@@ -22,7 +22,7 @@ const postSchema = new mongoose.Schema({
     },
 },
     {
-        timestamp: true
+        timestamps: { createdAt: 'createdAt', updatedAt: 'updatedAt' }
     })
 
 postSchema.virtual('post-ratings', {
