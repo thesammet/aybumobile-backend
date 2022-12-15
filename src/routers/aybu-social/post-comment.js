@@ -60,7 +60,7 @@ router.get('/social-post-comment/:post_id', auth, async (req, res) => {
 router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, res) => {
     try {
         const currentComment = await PostComment.findOne({ post: req.body.post_id })
-        const postCommentRating = await PostCommentRating.findOne({ post: req.body.post_id, owner: req.user._id })
+        const postCommentRating = await PostCommentRating.findOne({ postComment: req.params.post_comment_id, owner: req.user._id })
 
         if (postCommentRating) {
             postCommentRating.status
