@@ -41,14 +41,12 @@ router.get('/food', auth, async (req, res) => {
         })
         let foodSocialResult = []
         for await (const element of foods) {
-            const likeCount = (await Rating.count({ food: element._id, rating: 'like' }))
-            const dislikeCount = (await Rating.count({ food: element._id, rating: 'dislike' }))
+            const foodObj = { meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: element.likeCount, dislikes: element.dislikeCount }
             const ratingStatus = await Rating.find({ food: element._id, owner: req.user._id })
             if (ratingStatus.length != 0) {
-                foodSocialResult.push({ meal: element, likes: likeCount, dislikes: dislikeCount, ratingStatus: ratingStatus[0].rating })
+                foodSocialResult.push([foodObj, { ratingStatus: ratingStatus[0].rating }])
             } else
-                foodSocialResult.push({ meal: element, likes: likeCount, dislikes: dislikeCount, ratingStatus: 'inactive' })
-
+                foodSocialResult.push([foodObj, { ratingStatus: 'inactive' }])
         }
         res.status(200).send({ data: foodSocialResult })
     } catch (error) {
@@ -67,23 +65,21 @@ router.get('/trend', auth, async (req, res) => {
                 $lt: endMonth
             }
         })
-
         let foodSocialResult = []
         for await (const element of foods) {
-            const likeCount = (await Rating.find({ food: element._id, rating: 'like' })).length
-            const dislikeCount = (await Rating.find({ food: element._id, rating: 'dislike' })).length
+            const foodObj = { meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: element.likeCount, dislikes: element.dislikeCount }
             const ratingStatus = await Rating.find({ food: element._id, owner: req.user._id })
             if (ratingStatus.length != 0) {
-                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: ratingStatus[0].rating })
+                foodSocialResult.push([foodObj, { ratingStatus: ratingStatus[0].rating }])
             } else
-                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: likeCount, dislikes: dislikeCount, ratingStatus: 'inactive' })
+                foodSocialResult.push([foodObj, { ratingStatus: 'inactive' }])
         }
-        const commentTrend = foodSocialResult.sort(dynamicSort("-comments")).slice(0, 5)
-        const likeTrend = foodSocialResult.sort(dynamicSort("-likes")).slice(0, 5)
-        const dislikeTrend = foodSocialResult.sort(dynamicSort("-dislikes")).slice(0, 5)
+        const commentTrend = foodSocialResult.sort(dynamicSort("-comments")).slice(0, 7)
+        const likeTrend = foodSocialResult.sort(dynamicSort("-likes")).slice(0, 7)
+        const dislikeTrend = foodSocialResult.sort(dynamicSort("-dislikes")).slice(0, 7)
         res.status(200).send({ data: { commentTrend, likeTrend, dislikeTrend } })
     } catch (error) {
-        res.status(400).send({ error })
+        res.status(400).send({ error: error.toString() })
     }
 })
 
