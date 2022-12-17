@@ -43,9 +43,9 @@ router.get('/food', auth, async (req, res) => {
         for await (const element of foods) {
             const ratingStatus = await Rating.find({ food: element._id, owner: req.user._id })
             if (ratingStatus.length != 0) {
-                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: element.likeCount, dislikes: element.dislikeCount, ratingStatus: ratingStatus[0].rating })
+                foodSocialResult.push({ meal: element, likes: element.likeCount, dislikes: element.dislikeCount, ratingStatus: ratingStatus[0].rating })
             } else
-                foodSocialResult.push({ meal: _.omit(element.toObject(), ["commentCount", "__v", "epoch"]), comments: element.commentCount, likes: element.likeCount, dislikes: element.dislikeCount, ratingStatus: 'inactive' })
+                foodSocialResult.push({ meal: element, likes: element.likeCount, dislikes: element.dislikeCount, ratingStatus: 'inactive' })
         }
         res.status(200).send({ data: foodSocialResult })
     } catch (error) {
