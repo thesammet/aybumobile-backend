@@ -4,7 +4,6 @@ const Academic = require('../models/academic')
 const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 
-// JUST ADMIN CAN POST THE ACADEMIC ITEMS
 router.post('/academic', admin, auth, async (req, res) => {
     try {
         const academic = new Academic({
@@ -25,7 +24,7 @@ router.get('/academic/:department_name', auth, async (req, res) => {
         if (academic == null) {
             return res.status(400).send({
                 error: true,
-                errorMsg: 'There is no data',
+                errorMsg: `There is no data with ${req.params.department_name}`,
                 data: null
             })
         }
