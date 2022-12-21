@@ -21,7 +21,7 @@ router.get('/social-post', auth, async (req, res) => {
         limit: parseInt(req.query.limit, 10) || 10
     }
     try {
-        const posts = await Post.find({}).populate('owner', 'username')
+        const posts = await Post.find({}).populate('owner', 'username role')
             .sort('-createdAt')
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
