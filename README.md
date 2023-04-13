@@ -3,8 +3,7 @@
 A Node.js application
 </li><br/>
 JS LAUNCHER COMMAND: npm run dev<br/>
-MONGO SERVER COMMAND: mongodb/bin/mongod --dbpath=/your_mongoDB_path
-<br/>
+MONGO SERVER COMMAND: mongodb/bin/mongod --dbpath=/your_mongoDB_path</li>
 Market
 <ul>
   <li>Apple Store Link: https://apps.apple.com/us/app/ayb%C3%BC-mobil/id1658659307</li>
