@@ -1,6 +1,6 @@
 const app = require('./app')
 const port = process.env.PORT
-/* const axios = require('axios');
+const axios = require('axios');
 const cron = require('node-cron');
 
 const job = cron.schedule('0 12 1 * *', async () => {
@@ -18,7 +18,7 @@ const job = cron.schedule('0 12 1 * *', async () => {
 });
 
 
-job.start(); */
+job.start();
 
 app.listen(port, async () => {
     console.log('Server is up on port ' + port)
