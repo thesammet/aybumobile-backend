@@ -13,7 +13,7 @@ const auth = async (req, res, next) => {
 
         next()
     } catch (error) {
-        res.status(401).send({ error: 'You have not authority for that action!' })
+        res.status(401).send({ error: error.toString() })
     }
 }
 
