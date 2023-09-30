@@ -5,6 +5,7 @@ const PostComment = require('../../models/aybu-social/post-comment')
 const PostCommentRating = require('../../models/aybu-social/post-comment-rating')
 const auth = require('../../middleware/auth')
 const admin = require('../../middleware/admin')
+const Complaint = require('../../models/complaint')
 
 router.post('/social-post-comment', auth, async (req, res) => {
     const postComment = new PostComment({ ...req.body, post: req.body.post_id, owner: req.user._id })
@@ -39,8 +40,21 @@ router.get('/social-post-comment/:post_id', auth, async (req, res) => {
             .sort('-createdAt')
             .skip(pageOptions.page * pageOptions.limit)
             .limit(pageOptions.limit)
+
+        const myComplaintPosts = await Complaint.find({ complainantUser: req.user._id });
+
+        const notComplainedPosts = [];
+        for (const element of postComments) {
+            const complained = myComplaintPosts.some((complaint) =>
+                element.owner._id.toString() === complaint.complainedUser.toString()
+            );
+            if (!complained) {
+                notComplainedPosts.push(element);
+            }
+        }
+
         let postCommentResult = []
-        for await (const element of postComments) {
+        for await (const element of notComplainedPosts) {
             const ratingStatus = await PostCommentRating.findOne({ postComment: element._id, owner: req.user._id })
             if (ratingStatus) {
                 postCommentResult.push({ post: element, ratingStatus: ratingStatus.status })
