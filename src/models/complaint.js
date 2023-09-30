@@ -4,12 +4,17 @@ const complaintSchema = new mongoose.Schema({
     complainantUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        default: null
+        required: true
     },
     complainedUser: {
         type: mongoose.Schema.Types.ObjectId,
         ref: 'User',
-        default: null
+        required: true
+    },
+    postId: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Post',
+        required: true
     },
     title: {
         type: String,

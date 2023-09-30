@@ -4,6 +4,7 @@ const Post = require('../../models/aybu-social/post')
 const PostRating = require('../../models/aybu-social/post-rating')
 const auth = require('../../middleware/auth')
 const admin = require('../../middleware/admin')
+const Complaint = require('../../models/complaint')
 
 router.post('/social-post', auth, async (req, res) => {
     const post = new Post({ ...req.body, owner: req.user._id, })
@@ -18,31 +19,48 @@ router.post('/social-post', auth, async (req, res) => {
 router.get('/social-post', auth, async (req, res) => {
     const pageOptions = {
         page: parseInt(req.query.page, 10) || 0,
-        limit: parseInt(req.query.limit, 10) || 10
-    }
+        limit: parseInt(req.query.limit, 10) || 10,
+    };
+
     try {
-        const posts = await Post.find({}).populate('owner', 'username role')
+        const posts = await Post.find({})
+            .populate('owner', 'username role')
             .sort('-createdAt')
             .skip(pageOptions.page * pageOptions.limit)
-            .limit(pageOptions.limit)
+            .limit(pageOptions.limit);
 
-        let postResult = []
-        for await (const element of posts) {
-            const ratingStatus = await PostRating.findOne({ post: element._id, owner: req.user._id })
-            if (ratingStatus) {
-                postResult.push({ post: element, ratingStatus: ratingStatus.status })
-            } else
-                postResult.push({ post: element, ratingStatus: false })
+        const myComplaintPosts = await Complaint.find({ complainantUser: req.user._id });
+
+        const notComplainedPosts = [];
+        for (const element of posts) {
+            const complained = myComplaintPosts.some((complaint) =>
+                element.owner._id.toString() === complaint.complainedUser.toString()
+            );
+            if (!complained) {
+                notComplainedPosts.push(element);
+            }
         }
+
+        const postResult = [];
+        for (const element of notComplainedPosts) {
+            const ratingStatus = await PostRating.findOne({ post: element._id, owner: req.user._id });
+            if (ratingStatus) {
+                postResult.push({ post: element, ratingStatus: ratingStatus.status });
+            } else {
+                postResult.push({ post: element, ratingStatus: false });
+            }
+        }
+
         res.status(200).send({
             error: false,
             errorMsg: null,
-            data: postResult
-        })
+            data: postResult,
+        });
     } catch (error) {
-        res.status(400).send({ error: error.toString() })
+        res.status(400).send({ error: error.toString() });
     }
-})
+});
+
 
 router.post('/social-post-like/:post_id', auth, async (req, res) => {
     try {
