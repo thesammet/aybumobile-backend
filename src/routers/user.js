@@ -1,6 +1,7 @@
 const express = require('express')
 const router = new express.Router()
 const User = require('../models/user')
+const Complaint = require('../models/complaint')
 const auth = require('../middleware/auth')
 const admin = require('../middleware/admin')
 const _ = require('lodash')
@@ -80,6 +81,16 @@ router.delete('/users/me', auth, async (req, res) => {
         res.status(200).send({ user })
     } catch (error) {
         res.status(404).send({ error })
+    }
+})
+
+router.post('/users/create-complaint', auth, async (req, res) => {
+    const complaint = new Complaint({ ...req.body, complainantUser: req.user._id })
+    try {
+        await complaint.save()
+        res.status(201).send({ complaint })
+    } catch (error) {
+        res.status(400).send({ error: error.toString() })
     }
 })
 
