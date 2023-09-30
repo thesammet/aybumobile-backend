@@ -6,13 +6,20 @@ const PostCommentRating = require('../../models/aybu-social/post-comment-rating'
 const auth = require('../../middleware/auth')
 const admin = require('../../middleware/admin')
 const Complaint = require('../../models/complaint')
+const { sendPushNotification } = require("../../utils/firebase_push_notification")
 
 router.post('/social-post-comment', auth, async (req, res) => {
     const postComment = new PostComment({ ...req.body, post: req.body.post_id, owner: req.user._id })
     try {
-        const currentPost = await Post.findById(req.body.post_id)
+        const currentPost = await Post.findById(req.body.post_id).populate('owner', 'username role firToken')
+        console.log(currentPost)
         currentPost.commentCount = currentPost.commentCount + 1
-
+        console.log(currentPost.owner.firToken)
+        sendPushNotification(
+            currentPost.owner.firToken,
+            "AYBÜ MOBİL",
+            `Gönderiniz ${req.user.username} tarafından yorumlandı:\n${req.body.content}`
+        )
         await currentPost.save()
         await postComment.save()
         res.status(201).send({
@@ -77,10 +84,17 @@ router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, r
         const postCommentRating = await PostCommentRating.findOne({ postComment: req.params.post_comment_id, owner: req.user._id })
 
         if (postCommentRating) {
-            postCommentRating.status
-                ? currentComment.likeCount = currentComment.likeCount - 1
-                : currentComment.likeCount = currentComment.likeCount + 1
+            if (postCommentRating.status) {
+                currentComment.likeCount = currentComment.likeCount - 1
+                sendPushNotification(
+                    currentComment.owner.firToken,
+                    "AYBÜ MOBİL",
+                    `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentComment.content}`
+                )
 
+            } else {
+                currentComment.likeCount = currentComment.likeCount + 1
+            }
             postCommentRating.status = !postCommentRating.status
             await currentComment.save()
             await postCommentRating.save()
@@ -108,7 +122,11 @@ router.delete('/social-post-comment/:comment_id', admin, auth, async (req, res) 
     try {
         const currentPost = await Post.findById(req.body.post_id)
         currentPost.commentCount = currentPost.commentCount - 1
-
+        sendPushNotification(
+            currentPost.owner.firToken,
+            "AYBÜ MOBİL",
+            `Gönderiniz yöneticiler tarafından silinmiştir.\n${currentPost.content}`
+        )
         const postComment = await PostComment.findById(req.params.comment_id)
         await currentPost.save()
         await postComment.remove()

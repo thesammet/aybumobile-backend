@@ -5,10 +5,16 @@ const PostRating = require('../../models/aybu-social/post-rating')
 const auth = require('../../middleware/auth')
 const admin = require('../../middleware/admin')
 const Complaint = require('../../models/complaint')
+const User = require('../../models/user')
 
 router.post('/social-post', auth, async (req, res) => {
     const post = new Post({ ...req.body, owner: req.user._id, })
     try {
+        if (req.body.firToken) {
+            const user = await User.findById(req.user._id)
+            user.firToken = req.body.firToken
+            await user.save()
+        }
         await post.save()
         res.status(201).send({ data: post })
     } catch (error) {

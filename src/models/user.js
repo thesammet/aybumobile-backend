@@ -30,6 +30,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         default: "user"
     },
+    firToken: {
+        type: String,
+        default: ""
+    },
     tokens: [{
         token: {
             type: String,
