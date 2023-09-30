@@ -21,41 +21,28 @@ router.get('/social-post', auth, async (req, res) => {
         limit: parseInt(req.query.limit, 10) || 10
     }
     try {
-        // İstenen postları bulma
-        const posts = await Post.find({})
-            .populate('owner', 'username role')
+        const posts = await Post.find({}).populate('owner', 'username role')
             .sort('-createdAt')
             .skip(pageOptions.page * pageOptions.limit)
-            .limit(pageOptions.limit);
+            .limit(pageOptions.limit)
 
-        let postResult = [];
-
-        // Postları döngüye alarak kontrol etme
+        let postResult = []
         for await (const element of posts) {
-            // Post sahibi ile istek atan kullanıcının id'sini karşılaştırma
-            if (
-                (element.owner._id.toString() === req.user._id.toString()) ||
-                (element.owner._id.toString() === req.user.complainantUser.toString())
-            ) {
-                // Eğer post sahibi ya da şikayet edilen kullanıcı ise, bu postu ekleyin
-                const ratingStatus = await PostRating.findOne({ post: element._id, owner: req.user._id });
-                if (ratingStatus) {
-                    postResult.push({ post: element, ratingStatus: ratingStatus.status });
-                } else {
-                    postResult.push({ post: element, ratingStatus: false });
-                }
-            }
+            const ratingStatus = await PostRating.findOne({ post: element._id, owner: req.user._id })
+            if (ratingStatus) {
+                postResult.push({ post: element, ratingStatus: ratingStatus.status })
+            } else
+                postResult.push({ post: element, ratingStatus: false })
         }
-
         res.status(200).send({
             error: false,
             errorMsg: null,
             data: postResult
-        });
+        })
     } catch (error) {
-        res.status(400).send({ error: error.toString() });
+        res.status(400).send({ error: error.toString() })
     }
-});
+})
 
 router.post('/social-post-like/:post_id', auth, async (req, res) => {
     try {
