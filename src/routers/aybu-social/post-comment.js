@@ -14,14 +14,13 @@ router.post('/social-post-comment', auth, async (req, res) => {
         const currentPost = await Post.findById(req.body.post_id).populate('owner', 'username role firToken')
         console.log(currentPost)
         currentPost.commentCount = currentPost.commentCount + 1
-        console.log(currentPost.owner.firToken)
+        await currentPost.save()
+        await postComment.save()
         sendPushNotification(
             currentPost.owner.firToken,
             "AYBÜ MOBİL",
             `Gönderiniz ${req.user.username} tarafından yorumlandı:\n${req.body.content}`
         )
-        await currentPost.save()
-        await postComment.save()
         res.status(201).send({
             error: false,
             errorMsg: null,
@@ -86,12 +85,6 @@ router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, r
         if (postCommentRating) {
             if (postCommentRating.status) {
                 currentComment.likeCount = currentComment.likeCount - 1
-                sendPushNotification(
-                    currentComment.owner.firToken,
-                    "AYBÜ MOBİL",
-                    `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentComment.content}`
-                )
-
             } else {
                 currentComment.likeCount = currentComment.likeCount + 1
             }
@@ -108,6 +101,11 @@ router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, r
         currentComment.likeCount = currentComment.likeCount + 1
         await currentComment.save()
         await postRatingCreated.save()
+        sendPushNotification(
+            currentComment.owner.firToken,
+            "AYBÜ MOBİL",
+            `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentComment.content}`
+        )
         res.status(201).send({
             error: false,
             errorMsg: null,
