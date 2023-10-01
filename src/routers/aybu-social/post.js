@@ -81,9 +81,16 @@ router.post('/social-post-like/:post_id', auth, async (req, res) => {
 
         const postRating = await PostRating.findOne({ post: req.params.post_id, owner: req.user._id })
         if (postRating) {
-            postRating.status
-                ? currentPost.likeCount = currentPost.likeCount - 1
-                : currentPost.likeCount = currentPost.likeCount + 1
+            if (postRating.status) {
+                currentPost.likeCount = currentPost.likeCount - 1
+            } else {
+                sendPushNotification(
+                    currentComment.owner.firToken,
+                    "AYBÜ MOBİL",
+                    `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentPost.content}`
+                )
+                currentPost.likeCount = currentPost.likeCount + 1
+            }
 
             postRating.status = !postRating.status
             await currentPost.save()
