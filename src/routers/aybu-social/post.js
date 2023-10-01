@@ -102,7 +102,7 @@ router.post('/social-post-like/:post_id', auth, async (req, res) => {
         sendPushNotification(
             currentPost.owner.firToken,
             "AYBÜ MOBİL",
-            `Gönderiniz ${req.user.username} tarafından beğenilmiştir.\n${currentPost.content}`
+            `${req.user.username} gönderinizi beğendi:\n${currentPost.content}`
         )
         res.status(201).send({
             error: false,

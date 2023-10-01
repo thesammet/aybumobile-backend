@@ -18,7 +18,7 @@ router.post('/social-post-comment', auth, async (req, res) => {
         sendPushNotification(
             currentPost.owner.firToken,
             "AYBÜ MOBİL",
-            `Gönderiniz ${req.user.username} tarafından yorumlandı:\n${req.body.content}`
+            `${req.user.username} gönderinizi yorumladı:\n${req.body.content}`
         )
         res.status(201).send({
             error: false,
@@ -103,7 +103,7 @@ router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, r
         sendPushNotification(
             currentComment.owner.firToken,
             "AYBÜ MOBİL",
-            `Yorumunuz ${req.user.username} tarafından beğenilmiştir.\n${currentComment.content}`
+            `${req.user.username} yorumunuzu beğendi:\n${currentComment.content}`
         )
         res.status(201).send({
             error: false,
