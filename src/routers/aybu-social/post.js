@@ -71,7 +71,7 @@ router.get('/social-post', auth, async (req, res) => {
 
 router.post('/social-post-like/:post_id', auth, async (req, res) => {
     try {
-        const currentPost = await Post.findOne({ _id: req.params.post_id })
+        const currentPost = await Post.findOne({ _id: req.params.post_id }).populate('owner', 'username role firToken')
         if (!currentPost) {
             return res.status(400).send({
                 error: true,
@@ -100,7 +100,7 @@ router.post('/social-post-like/:post_id', auth, async (req, res) => {
         await currentPost.save()
         await postRatingCreated.save()
         sendPushNotification(
-            currentComment.owner.firToken,
+            currentPost.owner.firToken,
             "AYBÜ MOBİL",
             `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentPost.content}`
         )
