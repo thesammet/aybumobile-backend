@@ -103,7 +103,7 @@ router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, r
         sendPushNotification(
             currentComment.owner.firToken,
             "AYBÜ MOBİL",
-            `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentComment.content}`
+            `Yorumunuz ${req.user.username} tarafından beğenilmiştir.\n${currentComment.content}`
         )
         res.status(201).send({
             error: false,

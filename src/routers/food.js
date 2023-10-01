@@ -9,6 +9,7 @@ const dynamicSort = require('../utils/dynamic_sort')
 const _ = require('lodash')
 const moment = require('moment')
 const modifiedDate = require('../utils/modifyDate')
+const { sendPushNotification } = require("../utils/firebase_push_notification")
 
 router.post('/food', admin, auth, async (req, res) => {
     try {
@@ -18,6 +19,11 @@ router.post('/food', admin, auth, async (req, res) => {
             const mealObject = new Food({ meal: element.meal, date: element.date, epoch })
             await mealObject.save()
         }
+        sendPushNotification(
+            currentPost.owner.firToken,
+            "AYBÜ MOBİL",
+            `Okul yemek menüsü güncellendi!`
+        )
         res.status(201).send('Meal data created succesfully')
     } catch (error) {
         res.status(400).send({ error: true, errorMessage: error.toString() })
