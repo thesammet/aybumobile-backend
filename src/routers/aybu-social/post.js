@@ -6,6 +6,7 @@ const auth = require('../../middleware/auth')
 const admin = require('../../middleware/admin')
 const Complaint = require('../../models/complaint')
 const User = require('../../models/user')
+const { sendPushNotification } = require("../../utils/firebase_push_notification")
 
 router.post('/social-post', auth, async (req, res) => {
     const post = new Post({ ...req.body, owner: req.user._id, })
@@ -81,16 +82,9 @@ router.post('/social-post-like/:post_id', auth, async (req, res) => {
 
         const postRating = await PostRating.findOne({ post: req.params.post_id, owner: req.user._id })
         if (postRating) {
-            if (postRating.status) {
-                currentPost.likeCount = currentPost.likeCount - 1
-            } else {
-                sendPushNotification(
-                    currentComment.owner.firToken,
-                    "AYBÜ MOBİL",
-                    `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentPost.content}`
-                )
-                currentPost.likeCount = currentPost.likeCount + 1
-            }
+            postRating.status
+                ? currentPost.likeCount = currentPost.likeCount - 1
+                : currentPost.likeCount = currentPost.likeCount + 1
 
             postRating.status = !postRating.status
             await currentPost.save()
@@ -105,6 +99,11 @@ router.post('/social-post-like/:post_id', auth, async (req, res) => {
         currentPost.likeCount = currentPost.likeCount + 1
         await currentPost.save()
         await postRatingCreated.save()
+        sendPushNotification(
+            currentComment.owner.firToken,
+            "AYBÜ MOBİL",
+            `Gönderiniz${req.user.username} tarafından beğenilmiştir.\n${currentPost.content}`
+        )
         res.status(201).send({
             error: false,
             errorMsg: null,
