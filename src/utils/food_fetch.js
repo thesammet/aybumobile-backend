@@ -17,7 +17,6 @@ const getFoodList = async () => {
         $('h2.mb-2')
             .find('strong')
             .each((i, element) => {
-                //console.log(element.children[0].data)
                 dayList.push(element.children[0].data);
             });
         $('div.alert')

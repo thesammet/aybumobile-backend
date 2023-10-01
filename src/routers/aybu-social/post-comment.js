@@ -12,7 +12,6 @@ router.post('/social-post-comment', auth, async (req, res) => {
     const postComment = new PostComment({ ...req.body, post: req.body.post_id, owner: req.user._id })
     try {
         const currentPost = await Post.findById(req.body.post_id).populate('owner', 'username role firToken')
-        console.log(currentPost)
         currentPost.commentCount = currentPost.commentCount + 1
         await currentPost.save()
         await postComment.save()
@@ -79,7 +78,7 @@ router.get('/social-post-comment/:post_id', auth, async (req, res) => {
 
 router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, res) => {
     try {
-        const currentComment = await PostComment.findOne({ post: req.body.post_id, _id: req.params.post_comment_id })
+        const currentComment = await PostComment.findOne({ post: req.body.post_id, _id: req.params.post_comment_id }).populate('owner', 'username role firToken')
         const postCommentRating = await PostCommentRating.findOne({ postComment: req.params.post_comment_id, owner: req.user._id })
 
         if (postCommentRating) {
@@ -118,7 +117,7 @@ router.patch('/social-post-comment-rating/:post_comment_id', auth, async (req, r
 
 router.delete('/social-post-comment/:comment_id', admin, auth, async (req, res) => {
     try {
-        const currentPost = await Post.findById(req.body.post_id)
+        const currentPost = await Post.findById(req.body.post_id).populate('owner', 'username role firToken')
         currentPost.commentCount = currentPost.commentCount - 1
         sendPushNotification(
             currentPost.owner.firToken,

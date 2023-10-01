@@ -32,5 +32,4 @@ exports.sendPushNotification = async (token, title, body) => {
         body: JSON.stringify(message),
     })
     response = await response.json()
-    console.log(response)
 }
