@@ -29,10 +29,9 @@ router.get('/food', auth, async (req, res) => {
 
     var dt = new Date();
     const todayENDate = dt.getDate() + "." + (dt.getMonth() + 1) + "." + dt.getFullYear()
-    console.log(todayENDate)
+
     let today = moment(new Date(todayENDate))
     let lastWeekDay = moment().add(6, 'days')
-
     try {
         const foods = await Food.find({
             epoch: {
@@ -48,7 +47,6 @@ router.get('/food', auth, async (req, res) => {
             } else
                 foodSocialResult.push({ meal: element, likes: element.likeCount, dislikes: element.dislikeCount, ratingStatus: 'inactive' })
         }
-        console.log(foodSocialResult)
         res.status(200).send({ data: foodSocialResult })
     } catch (error) {
         res.status(400).send({ error: error })
