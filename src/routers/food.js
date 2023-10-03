@@ -28,7 +28,7 @@ router.post('/food', admin, auth, async (req, res) => {
 router.get('/food', auth, async (req, res) => {
 
     var dt = new Date();
-    const todayENDate = dt.getDate() + "." + (dt.getMonth() + 1) + "." + dt.getFullYear()
+    const todayENDate = (dt.getDate() + 1) + "." + (dt.getMonth() + 1) + "." + dt.getFullYear()
 
     let today = moment(new Date(todayENDate))
     let lastWeekDay = moment().add(6, 'days')
