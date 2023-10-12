@@ -7,7 +7,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         unique: true,
         validate(username) {
-            if (username < 4) {
+            if (username < 4 || username > 19) {
                 throw new Error({ error: 'Username greater than 4 characters!' })
             }
         },
